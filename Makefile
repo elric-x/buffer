@@ -1,28 +1,23 @@
 CC = gcc
 CFLAGS = -Wall -Wextra
 
-OBJDIR = ./obj
-BINDIR = ./bin
 
 LIB_TARGET = libbuffer.tar
 TEST_TARGET = buffer_test
 
-all: $(OBJDIR) $(LIB_TARGET)  $(TEST_TARGET)
-# Create object directory if it doesn't exist
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
+all:  $(LIB_TARGET)  $(TEST_TARGET)
 
-$(LIB_TARGET): $(OBJDIR)/buffer.o
-	tar -cf $@ $<
+$(LIB_TARGET): buffer.o
+	tar -cf $@  buffer.o buffer.h
 
-$(OBJDIR)/buffer.o: buffer.c buffer.h
+
+buffer.o: buffer.c buffer.h
 	$(CC) $(CFLAGS) -c buffer.c -o $@
 
-$(TEST_TARGET): $(OBJDIR)/buffer.o test.buffer.c 
-	$(CC) $(CFLAGS) $(OBJDIR)/buffer.o test.buffer.c -o $@
+$(TEST_TARGET): buffer.o test.buffer.c 
+	$(CC) $(CFLAGS) buffer.o test.buffer.c -o $@
 
 clean:
-	rm -rf $(OBJDIR) 
 	rm $(LIB_TARGET) 
 	rm $(TEST_TARGET) 
 
