@@ -1,4 +1,5 @@
 #include "./buffer.h"
+#include <cstddef>
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
@@ -20,18 +21,17 @@ buffer_t* buffer_create(size_t size){
 		return new_buffer;
 }
 
-int buffer_write(buffer_t *buffer, const char *txt){
+int buffer_write(buffer_t *buffer, const char *txt, size_t len){
 		if(!buffer ||!buffer->base){
 				fputs("Buffer is NULL or uninitialized\n", stderr);
 				return 1;
 		}
-		size_t txt_len = strlen(txt);
-		if(txt_len > (buffer->size - buffer->len)){
+		if(len > (buffer->size - buffer->len)){
 				fputs("Unsufficient buffer size\n", stderr);
 				return 1;
 		}
-		memcpy(buffer->base+buffer->len, txt ,txt_len);
-		buffer->len += txt_len;
+		memcpy(buffer->base+buffer->len, txt ,len);
+		buffer->len += len;
 		return 0;
 }
 
