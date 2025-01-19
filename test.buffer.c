@@ -38,7 +38,7 @@ void test_buffer_write() {
     printf("Testing buffer_write...\n");
     buffer_t *buffer = buffer_create(128);
     const char *data = "Hello, Buffer!";
-    int result = buffer_write(buffer, data);
+    int result = buffer_write(buffer, data, strlen(data));
     assert(result == 0);
     assert(buffer->len != 0); // buffer_write does not set len
     buffer_free(buffer);
@@ -87,7 +87,7 @@ void test_buffer_empty() {
     printf("Testing buffer_empty...\n");
     buffer_t *buffer = buffer_create(128);
     const char *data = "Temporary data.";
-    buffer_write(buffer, data);
+    buffer_write(buffer, data, strlen(data));
     buffer->len = strlen(data); // Set len manually since buffer_write doesn't modify len
     assert(buffer->len == strlen(data));
 
@@ -104,7 +104,7 @@ void test_buffer_dump() {
     printf("Testing buffer_dump...\n");
     buffer_t *buffer = buffer_create(128);
     const char *data = "Dump test data.";
-    buffer_write(buffer, data);
+    buffer_write(buffer, data, strlen(data));
     buffer->len = strlen(data); // Set len manually since buffer_write doesn't modify len
     buffer_dump(buffer);
     buffer_free(buffer);
