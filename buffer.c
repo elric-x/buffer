@@ -1,4 +1,5 @@
 #include "./buffer.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
@@ -20,7 +21,7 @@ buffer_t* buffer_create(size_t size){
 		return new_buffer;
 }
 
-int buffer_write(buffer_t *buffer, const char *txt, size_t len){
+int buffer_write(buffer_t *buffer, const char *txt, size_t len, const char write_mode){
 		if(!buffer ||!buffer->base){
 				fputs("Buffer is NULL or uninitialized\n", stderr);
 				return 1;
@@ -29,18 +30,34 @@ int buffer_write(buffer_t *buffer, const char *txt, size_t len){
 				fputs("Unsufficient buffer size\n", stderr);
 				return 1;
 		}
-		memcpy(buffer->base+buffer->len, txt ,len);
+		uint8_t* start = buffer->base;
+		switch(write_mode){
+				case 'a':
+						start += len;
+				break;
+				default:
+						start -= len;
+		}
+		memcpy(start, txt ,len);
 		buffer->len += len;
 		return 0;
 }
 
-int buffer_fread(buffer_t *buffer, const char *file_path){
+int buffer_fread(buffer_t *buffer, const char *file_path, const char write_mode){
 		FILE *file_ptr = fopen(file_path, "r");
 		if(file_ptr == NULL){
 				fprintf(stderr, "Unable to open file %s: %s", file_path, strerror(errno));
 				return 1;
 		}
-		size_t len = fread(buffer->base, sizeof(uint8_t), buffer->size,file_ptr);
+		uint8_t* start = buffer->base;
+		switch(write_mode){
+				case 'a':
+						start += buffer->len;
+				break;
+				default:
+						start -= buffer->len;
+		}
+		size_t len = fread(start, sizeof(uint8_t), buffer->size,file_ptr);
 		buffer->len = len;
 		if (ferror(file_ptr)){
 				fputs("failed reading the file", stderr);

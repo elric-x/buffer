@@ -12,9 +12,9 @@ typedef struct buffer{
 
 buffer_t* buffer_create(size_t size);
 
-int buffer_fread(buffer_t *buffer, const char *file_path);
+int buffer_fread(buffer_t *buffer, const char *file_path, const char write_mode);
 int buffer_fwrite(buffer_t *buffer, const char *file_path, const char *write_mode);
-int buffer_write(buffer_t *buffer, const char *data, size_t len);
+int buffer_write(buffer_t *buffer, const char *txt, size_t len, const char write_mode);
 
 void buffer_empty(buffer_t *buffer);
 void buffer_dump(buffer_t *buffer);
