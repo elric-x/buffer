@@ -64,10 +64,12 @@ int buffer_fread(buffer_t *buffer, const char *file_path, const char write_mode)
 		case 'a':
 			start += buffer->len;
 			break;
+		case 'w':
+			break;
 		default:
-			start -= buffer->len;
+			fputs("Invalid write mode\n", stderr);
 	}
-	size_t len = fread(start, sizeof(uint8_t), buffer->size,file_ptr);
+	size_t len = fread(start, sizeof(uint8_t), buffer->size, file_ptr);
 	buffer->len = len;
 	if (ferror(file_ptr)){
 		fputs("failed reading the file", stderr);
