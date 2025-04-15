@@ -54,11 +54,7 @@ int buffer_write(buffer_t *buffer, const char *txt, size_t len, const char write
 }
 
 int buffer_fread(buffer_t *buffer, const char *file_path, const char write_mode){
-	FILE *file_ptr = fopen(file_path, "r");
-	if(file_ptr == NULL){
-		fprintf(stderr, "Unable to open file %s: %s", file_path, strerror(errno));
-		return 1;
-	}
+	FILE *file_ptr = NULL;
 	uint8_t* start = buffer->base;
 	switch(write_mode){
 		case 'a':
@@ -68,6 +64,12 @@ int buffer_fread(buffer_t *buffer, const char *file_path, const char write_mode)
 			break;
 		default:
 			fputs("Invalid write mode\n", stderr);
+			return 1;
+	}
+	file_ptr = fopen(file_path, "r");
+	if(file_ptr == NULL){
+		fprintf(stderr, "Unable to open file %s: %s", file_path, strerror(errno));
+		return 1;
 	}
 	size_t len = fread(start, sizeof(uint8_t), buffer->size, file_ptr);
 	buffer->len = len;
