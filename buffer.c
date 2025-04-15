@@ -42,7 +42,7 @@ int buffer_write(buffer_t *buffer, const char *txt, size_t len, const char write
 			return (tmp == NULL);
 			break;
 		case 'w':
-			tmp = memcpy((buffer->base - buffer->len), txt ,len);
+			tmp = memcpy(buffer->base, txt ,len);
 			buffer->len = len;
 			return (tmp == NULL);
 			break;
