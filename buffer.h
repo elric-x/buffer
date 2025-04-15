@@ -4,10 +4,14 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#define READ 'r'
+#define WRITE 'w'
+#define APPEND 'a'
+
 typedef struct buffer{
-		uint8_t *base;
-		size_t len; //lengt of the content written in base
-		size_t size; //total size of the buffer
+	uint8_t *base;
+	size_t len; //lengt of the content written in base
+	size_t size; //total size of the buffer
 }buffer_t;
 
 /*
@@ -60,7 +64,7 @@ void buffer_dump(buffer_t *buffer);
 
 /*
  *	desc delete a buffer 
- * 	@param buffer: buffer which has to be deleted
+ * 	@param buffer: buffer which has to be dumped
  * 	@return void
  */
 void buffer_free(buffer_t *buffer);
