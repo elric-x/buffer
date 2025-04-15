@@ -115,7 +115,7 @@ void buffer_dump(buffer_t *buffer) {
 
 	// Print as text
 	printf("Text: %*s", (int)buffer->len ,(char*)buffer->base);
-
+	putchar('\n');
 	// Print as hex
 	printf("Hex: ");
 	for (size_t i = 0; i < buffer->len; i++) {
