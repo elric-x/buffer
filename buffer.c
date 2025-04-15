@@ -4,6 +4,14 @@
 #include <errno.h>
 #include <string.h>
 
+#ifdef __BUFFER_THREAD_SAFE__
+#include <pthread.h>
+pthread_mutex_t Lock = PTHREAD_MUTEX_INITIALIZER;
+#endif
+
+
+
+
 buffer_t* buffer_create(size_t size){
 	buffer_t *new_buffer = calloc(1, sizeof(buffer_t));
 	if(new_buffer == NULL){
@@ -37,13 +45,26 @@ int buffer_write(buffer_t *buffer, const char *txt, size_t len, const char write
 				fputs("Unsufficient buffer size\n", stderr);
 				return 1;
 			}	
+			#ifdef __BUFFER_THREAD_SAFE__
+				pthread_mutex_lock(&Lock);
+			#endif
+
 			tmp = memcpy((buffer->base + buffer->len), txt ,len);
 			buffer->len += len;
+			#ifdef __BUFFER_THREAD_SAFE__
+				pthread_mutex_unlock(&Lock);
+			#endif
 			return (tmp == NULL);
 			break;
 		case 'w':
+			#ifdef __BUFFER_THREAD_SAFE__
+				pthread_mutex_lock(&Lock);
+			#endif
 			tmp = memcpy(buffer->base, txt ,len);
 			buffer->len = len;
+			#ifdef __BUFFER_THREAD_SAFE__
+				pthread_mutex_unlock(&Lock);
+			#endif
 			return (tmp == NULL);
 			break;
 		default:
@@ -71,8 +92,14 @@ int buffer_fread(buffer_t *buffer, const char *file_path, const char write_mode)
 		fprintf(stderr, "Unable to open file %s: %s", file_path, strerror(errno));
 		return 1;
 	}
+	#ifdef __BUFFER_THREAD_SAFE__
+		pthread_mutex_lock(&Lock);
+	#endif
 	size_t len = fread(start, sizeof(uint8_t), buffer->size, file_ptr);
 	buffer->len = len;
+	#ifdef __BUFFER_THREAD_SAFE__
+		pthread_mutex_unlock(&Lock);
+	#endif
 	if (ferror(file_ptr)){
 		fputs("failed reading the file", stderr);
 		fclose(file_ptr);
@@ -99,8 +126,14 @@ int buffer_fwrite(buffer_t *buffer, const char *file_path, const char *write_mod
 }
 
 void buffer_empty(buffer_t *buffer){
+	#ifdef __BUFFER_THREAD_SAFE__
+		pthread_mutex_lock(&Lock);
+	#endif
 	//memset(buffer->base, '\0', buffer->len);
 	buffer->len = 0;
+	#ifdef __BUFFER_THREAD_SAFE__
+		pthread_mutex_unlock(&Lock);
+	#endif
 	return;
 }
 
@@ -127,7 +160,13 @@ void buffer_dump(buffer_t *buffer) {
 void buffer_free(buffer_t *buffer){
 	if(!buffer || !buffer->base)
 		return;
+	#ifdef __BUFFER_THREAD_SAFE__
+		pthread_mutex_lock(&Lock);
+	#endif
 	free(buffer->base);
 	free(buffer);
+	#ifdef __BUFFER_THREAD_SAFE__
+		pthread_mutex_unlock(&Lock);
+	#endif
 	return;
 }
